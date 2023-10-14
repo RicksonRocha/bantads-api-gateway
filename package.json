@@ -1,0 +1,15 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "api gateway",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "author": "rickson rocha",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
+  }
+}
