@@ -3,7 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const router = express.Router();
 
 const customerProxy = createProxyMiddleware({
-  target: 'http://localhost:8080/api/',
+  target: 'http://localhost:8080/',
   changeOrigin: true,
 });
 
