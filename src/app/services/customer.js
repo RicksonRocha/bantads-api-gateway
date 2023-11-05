@@ -8,30 +8,38 @@ const customerProxy = createProxyMiddleware({
 });
 
 router.get(`/`, (req, res) => {
-    customerProxy(req, res, (error) => {
-        if (error) {
-          res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
-        } else {
-          const customers = res.locals.data; 
-          res.json(customers);
-        }
-      });
+    customerProxy(req, res, (error) => {    
+      if (error) {
+        res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
+      } else {
+        const customers = res.locals.data; 
+        res.json(customers);
+      }
+    });
 });
 
+
 router.get('/:id', (req, res) => {
-    // ...
+  customerProxy(req, res, (error) => {
+    if (error) {
+      res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
+    } else {      
+      const customer = res.locals.data; 
+      res.json(customer);
+    } 
+  })
 });
 
 router.post('/', (req, res) => {
-    // ...
+  customerProxy(req, res, (error) => {
+    if (error) {
+      res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
+    } else {      
+      const customer = res.locals.data; 
+      res.json(customer);
+    } 
+  })
 });
 
-router.put('/:id', (req, res) => {
-    // ...
-});
-
-router.delete('/:id', (req, res) => {
-    // ...
-});
 
 module.exports = router;
