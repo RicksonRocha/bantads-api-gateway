@@ -8,14 +8,14 @@ const sagaProxy = createProxyMiddleware({
 });
 
 router.post('/customer', (req, res) => {
-    sagaProxy(req, res, (error) => {
-        if (error) {
-          res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
-        } else {
-          const customer = res.locals.data; 
-          res.json(customer);
-        }
-    });
+  sagaProxy(req, res, (error) => {
+    if (error) {
+      res.status(500).json({ error: 'Erro ao acessar o serviço de cliente' });
+    } else {
+      const customer = res.locals.data; 
+      res.json(customer);
+    }
+  });
 });
 
 module.exports = router;

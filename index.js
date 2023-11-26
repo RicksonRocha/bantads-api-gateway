@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 const customerService = require('./src/app/services/customer');
 const authService = require('./src/app/services/auth');
 const sagaService = require('./src/app/services/saga');
 
+app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
