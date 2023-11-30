@@ -1,38 +1,62 @@
+const http = require('http');
 const express = require('express');
-const cors = require('cors');
-const app = express();
-const port = 3000;
-const customerService = require("./src/app/services/customer");
-const managerService = require("./src/app/services/manager");
-const adminService = require("./src/app/services/admin");
-const authService = require("./src/app/services/auth");
-const sagaService = require("./src/app/services/saga");
+const httpProxy = require('express-http-proxy');
 
-app.use(cors()); 
+const app = express();
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const helmet = require('helmet');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(logger('dev'));
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-app.use("/api/customer", customerService);
-app.use("/api/manager", managerService);
-app.use("/api/admin", adminService);
-app.use("/api/auth", authService);
-app.use("/api/saga", sagaService);
+const sagaServiceProxy = httpProxy('http://localhost:9090');
+const authServiceProxy = httpProxy('http://localhost:3001');
+const customerServiceProxy = httpProxy('http://localhost:8080');
+const managerServiceProxy = httpProxy('http://localhost:8081');
+const accountServiceProxy = httpProxy('http://localhost:8081');
 
-app.use((req, res, next) => {
-  const error = new Error("Not Found");
-  error.status = 404;
-  next(error);
-});
+function genericProxy(req, res, next) {
+  let targetProxy;
+  const url = req.url;
 
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
-    error: {
-      message: error.message,
-    },
-  });
-});
+  switch (true) {
+    case url.startsWith('/api/saga'):
+      targetProxy = sagaServiceProxy;
+      break;
+    case url.startsWith('/api/customer'):
+      targetProxy = customerServiceProxy;
+      break;
+    case url.startsWith('/api/auth'):
+      targetProxy = authServiceProxy;
+      break;
+    case url.startsWith('/api/gerente'):
+      targetProxy = managerServiceProxy;
+      break;
+    case url.startsWith('/api/conta'):
+      targetProxy = accountServiceProxy;
+      break;
+    default:
+      targetProxy = null;
+  }
 
-app.listen(port, () => {
+  if (targetProxy) {
+    targetProxy(req, res, next);
+  } else {
+    res.status(404).send('Endpoint não encontrado');
+  }
+}
+
+app.use(genericProxy);
+
+const server = http.createServer(app);
+const port = 3000;
+server.listen(port, () => {
   console.log(`API Gateway com proxy reverso rodando na porta ${port}`);
 });
