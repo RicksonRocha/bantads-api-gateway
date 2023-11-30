@@ -19,8 +19,8 @@ app.use(cookieParser());
 const sagaServiceProxy = httpProxy('http://localhost:9090');
 const authServiceProxy = httpProxy('http://localhost:3001');
 const customerServiceProxy = httpProxy('http://localhost:8080');
-const managerServiceProxy = httpProxy('http://localhost:8081');
 const accountServiceProxy = httpProxy('http://localhost:8081');
+const managerServiceProxy = httpProxy('http://localhost:8082');
 
 function genericProxy(req, res, next) {
   let targetProxy;
